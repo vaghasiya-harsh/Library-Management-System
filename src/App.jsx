@@ -1,34 +1,31 @@
-import { bookData } from "./data/data";
+import { Routes, Route, Navigate } from "react-router-dom";
+
+import Dashboard from "./pages/Dashboard/Dashboard";
+import Books from "./pages/Books/Books";
+import BookDetails from "./pages/Books/BookDetails";
+import Members from "./pages/Members/Members";
+import MemberDetails from "./pages/Members/MemberDetails";
+import Transactions from "./pages/Transactions/Transactions";
 
 function App() {
   return (
-    <div>
-      <h1>Library Management System</h1>
+    <Routes>
 
-      <p>Total Books: {bookData.length}</p>
-      <hr />
+      <Route path="/" element={<Navigate to="/dashboard" />} />
 
-      <h2>All Books</h2>
+      <Route path="/dashboard" element={<Dashboard />} />
 
-      {bookData.map((book) => {
-        return (
-          <div key={book.id}>
-            <h3>{book.title}</h3>
+      <Route path="/books" element={<Books />} />
 
-            <p>Book ID: {book.id}</p>
-            <p>Author: {book.author}</p>
-            <p>Category: {book.category}</p>
-            <p>ISBN: {book.isbn}</p>
-            <p>Publisher: {book.publisher}</p>
-            <p>Published Year: {book.publishedYear}</p>
-            <p>Total Copies: {book.totalCopies}</p>
-            <p>Available Copies: {book.availableCopies}</p>
+      <Route path="/books/:id" element={<BookDetails />} />
 
-            <hr />
-          </div>
-        );
-      })}
-    </div>
+      <Route path="/members" element={<Members />} />
+
+      <Route path="/members/:id" element={<MemberDetails />} />
+
+      <Route path="/transactions" element={<Transactions />} />
+
+    </Routes>
   );
 }
 
