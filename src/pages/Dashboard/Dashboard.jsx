@@ -1,5 +1,7 @@
-import React from "react";
+import { useContext } from "react";
+import { LibraryContext } from "../../context/LibraryContext";
 const Dashboard = () => {
+  const {books, members, transactions} = useContext(LibraryContext);
   return (
     <div>
       <div className="mb-6">
@@ -14,29 +16,36 @@ const Dashboard = () => {
         <div className="rounded-xl bg-white p-6 shadow-sm">
           <p className="text-sm text-gray-500">Total Books</p>
 
-          <h2 className="mt-2 text-3xl font-bold text-gray-900">100</h2>
+          <h2 className="mt-2 text-3xl font-bold text-gray-900">
+            {books.length}
+          </h2>
         </div>
 
         <div className="rounded-xl bg-white p-6 shadow-sm">
           <p className="text-sm text-gray-500">Total Members</p>
 
-          <h2 className="mt-2 text-3xl font-bold text-gray-900">0</h2>
+          <h2 className="mt-2 text-3xl font-bold text-gray-900">
+            {members.length}
+          </h2>
         </div>
 
         <div className="rounded-xl bg-white p-6 shadow-sm">
-          <p className="text-sm text-gray-500">Issued Books</p>
+          <p className="text-sm text-gray-500">Transactions</p>
 
-          <h2 className="mt-2 text-3xl font-bold text-gray-900">0</h2>
+          <h2 className="mt-2 text-3xl font-bold text-gray-900">
+            {transactions.length}
+          </h2>
         </div>
 
         <div className="rounded-xl bg-white p-6 shadow-sm">
           <p className="text-sm text-gray-500">Available Books</p>
 
-          <h2 className="mt-2 text-3xl font-bold text-gray-900">100</h2>
+          <h2 className="mt-2 text-3xl font-bold text-gray-900">
+            {books.reduce((total, book) => total + book.availableCopies, 0)}
+          </h2>
         </div>
       </div>
     </div>
   );
 };
-
 export default Dashboard;
