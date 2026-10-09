@@ -1,13 +1,10 @@
-
 import { Link } from "react-router-dom";
 
 const BookTable = ({ books, onDelete }) => {
   if (books.length === 0) {
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-10 text-center">
-        <h2 className="text-lg font-semibold text-gray-800">
-          No books found
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-800">No books found</h2>
         <p className="mt-2 text-sm text-gray-500">
           Add your first book to get started.
         </p>
@@ -45,13 +42,9 @@ const BookTable = ({ books, onDelete }) => {
                     {book.title}
                   </td>
 
-                  <td className="px-5 py-4 text-gray-600">
-                    {book.author}
-                  </td>
+                  <td className="px-5 py-4 text-gray-600">{book.author}</td>
 
-                  <td className="px-5 py-4 text-gray-600">
-                    {book.category}
-                  </td>
+                  <td className="px-5 py-4 text-gray-600">{book.category}</td>
 
                   <td className="whitespace-nowrap px-5 py-4">
                     {book.availableCopies} / {book.totalCopies}
@@ -95,6 +88,6 @@ const BookTable = ({ books, onDelete }) => {
       </div>
     </div>
   );
-}
+};
 
 export default BookTable;

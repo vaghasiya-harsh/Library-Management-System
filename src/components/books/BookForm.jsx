@@ -43,7 +43,7 @@ const BookForm = ({ initialValues, onSubmit, submitLabel }) => {
       available > total
     ) {
       setError(
-        "Enter a valid year and copies. Available copies must be between 0 and total copies."
+        "Enter a valid year and copies. Available copies must be between 0 and total copies.",
       );
       return;
     }
@@ -130,6 +130,6 @@ const BookForm = ({ initialValues, onSubmit, submitLabel }) => {
       </div>
     </form>
   );
-}
+};
 
 export default BookForm;

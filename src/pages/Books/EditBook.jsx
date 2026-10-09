@@ -13,9 +13,7 @@ const EditBook = () => {
   if (!book) {
     return (
       <div className="rounded-xl bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-bold text-gray-900">
-          Book not found
-        </h1>
+        <h1 className="text-xl font-bold text-gray-900">Book not found</h1>
 
         <Link
           to="/books"
@@ -60,9 +58,7 @@ const EditBook = () => {
           ← Back to Books
         </Link>
 
-        <h1 className="mt-3 text-2xl font-bold text-gray-900">
-          Edit Book
-        </h1>
+        <h1 className="mt-3 text-2xl font-bold text-gray-900">Edit Book</h1>
 
         <p className="mt-1 text-sm text-gray-500">
           Update details for {book.id}.
@@ -76,7 +72,6 @@ const EditBook = () => {
       />
     </div>
   );
-}
+};
 
 export default EditBook;
-
