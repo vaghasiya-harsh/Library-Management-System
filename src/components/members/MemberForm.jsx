@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const MemberForm = ({ initialValues, onSubmit, submitLabel }) =>                                    {
+const MemberForm = ({ initialValues, onSubmit, submitLabel }) => {
   const [formData, setFormData] = useState(initialValues);
   const [error, setError] = useState("");
 
