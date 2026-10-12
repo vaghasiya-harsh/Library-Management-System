@@ -1,4 +1,3 @@
-
 import { createContext, useState } from "react";
 import { bookData } from "../data/data";
 
@@ -19,10 +18,19 @@ export function LibraryProvider({ children }) {
     return `BK${String(highestId + 1).padStart(4, "0")}`;
   };
 
+  const generateMemberId = () => {
+    const highestId = members.reduce((max, member) => {
+      const number = Number(member.id.replace("MEM", ""));
+      return Number.isFinite(number) ? Math.max(max, number) : max;
+    }, 0);
+
+    return `MEM${String(highestId + 1).padStart(3, "0")}`;
+  };
+
   // CREATE
   const addBook = (bookDetails) => {
     const duplicateISBN = books.some(
-      (book) => book.isbn.trim() === bookDetails.isbn.trim()
+      (book) => book.isbn.trim() === bookDetails.isbn.trim(),
     );
 
     if (duplicateISBN) {
@@ -42,12 +50,36 @@ export function LibraryProvider({ children }) {
     return { success: true };
   };
 
+  const addMember = (memberDetails) => {
+    const emailExists = members.some(
+      (member) =>
+        member.email.trim().toLowerCase() ===
+        memberDetails.email.trim().toLowerCase(),
+    );
+
+    if (emailExists) {
+      return {
+        success: false,
+        message: "This email is already registered.",
+      };
+    }
+
+    const newMember = {
+      ...memberDetails,
+      id: generateMemberId(),
+      status: memberDetails.status || "Active",
+    };
+
+    setMembers((currentMembers) => [...currentMembers, newMember]);
+
+    return { success: true };
+  };
+
   // UPDATE
   const updateBook = (id, updatedDetails) => {
     const duplicateISBN = books.some(
       (book) =>
-        book.id !== id &&
-        book.isbn.trim() === updatedDetails.isbn.trim()
+        book.id !== id && book.isbn.trim() === updatedDetails.isbn.trim(),
     );
 
     if (duplicateISBN) {
@@ -68,10 +100,43 @@ export function LibraryProvider({ children }) {
 
     setBooks((currentBooks) =>
       currentBooks.map((book) =>
-        book.id === id
-          ? { ...book, ...updatedDetails, id: book.id }
-          : book
-      )
+        book.id === id ? { ...book, ...updatedDetails, id: book.id } : book,
+      ),
+    );
+
+    return { success: true };
+  };
+
+  const updateMember = (id, updatedDetails) => {
+    const emailExists = members.some(
+      (member) =>
+        member.id !== id &&
+        member.email.trim().toLowerCase() ===
+          updatedDetails.email.trim().toLowerCase(),
+    );
+
+    if (emailExists) {
+      return {
+        success: false,
+        message: "Another member already uses this email.",
+      };
+    }
+
+    const existingMember = members.find((member) => member.id === id);
+
+    if (!existingMember) {
+      return {
+        success: false,
+        message: "Member not found.",
+      };
+    }
+
+    setMembers((currentMembers) =>
+      currentMembers.map((member) =>
+        member.id === id
+          ? { ...member, ...updatedDetails, id: member.id }
+          : member,
+      ),
     );
 
     return { success: true };
@@ -82,7 +147,7 @@ export function LibraryProvider({ children }) {
     const hasActiveTransaction = transactions.some(
       (transaction) =>
         transaction.bookId === id &&
-        ["Issued", "Overdue"].includes(transaction.status)
+        ["Issued", "Overdue"].includes(transaction.status),
     );
 
     if (hasActiveTransaction) {
@@ -92,8 +157,27 @@ export function LibraryProvider({ children }) {
       };
     }
 
-    setBooks((currentBooks) =>
-      currentBooks.filter((book) => book.id !== id)
+    setBooks((currentBooks) => currentBooks.filter((book) => book.id !== id));
+
+    return { success: true };
+  };
+
+  const deleteMember = (id) => {
+    const hasActiveTransaction = transactions.some(
+      (transaction) =>
+        transaction.memberId === id &&
+        ["Issued", "Overdue"].includes(transaction.status),
+    );
+
+    if (hasActiveTransaction) {
+      return {
+        success: false,
+        message: "This member has active issued books and cannot be deleted.",
+      };
+    }
+
+    setMembers((currentMembers) =>
+      currentMembers.filter((member) => member.id !== id),
     );
 
     return { success: true };
@@ -107,9 +191,14 @@ export function LibraryProvider({ children }) {
         transactions,
         setMembers,
         setTransactions,
+
         addBook,
         updateBook,
         deleteBook,
+
+        addMember,
+        updateMember,
+        deleteMember,
       }}
     >
       {children}
