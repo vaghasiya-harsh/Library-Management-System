@@ -27,6 +27,16 @@ export function LibraryProvider({ children }) {
     return `MEM${String(highestId + 1).padStart(3, "0")}`;
   };
 
+  const generateTransactionId = () => {
+    const highestId = transactions.reduce((max, transaction) => {
+      const number = Number(transaction.id.replace("TRX", ""));
+
+      return Number.isFinite(number) ? Math.max(max, number) : max;
+    }, 0);
+
+    return `TRX${String(highestId + 1).padStart(3, "0")}`;
+  };
+
   // CREATE
   const addBook = (bookDetails) => {
     const duplicateISBN = books.some(
@@ -183,6 +193,126 @@ export function LibraryProvider({ children }) {
     return { success: true };
   };
 
+  const issueBook = ({ bookId, memberId, issueDate, dueDate }) => {
+    const book = books.find((item) => item.id === bookId);
+    const member = members.find((item) => item.id === memberId);
+
+    if (!book) {
+      return { success: false, message: "Book not found." };
+    }
+
+    if (!member) {
+      return { success: false, message: "Member not found." };
+    }
+
+    if (member.status !== "Active") {
+      return {
+        success: false,
+        message: "Only active members can borrow books.",
+      };
+    }
+
+    if (Number(book.availableCopies) <= 0) {
+      return {
+        success: false,
+        message: "This book is currently unavailable.",
+      };
+    }
+
+    if (!issueDate || !dueDate || dueDate < issueDate) {
+      return {
+        success: false,
+        message: "Due date must be on or after the issue date.",
+      };
+    }
+
+    const activeTransactions = transactions.filter(
+      (transaction) =>
+        transaction.memberId === memberId &&
+        ["Issued", "Overdue"].includes(transaction.status),
+    );
+
+    if (activeTransactions.length >= 3) {
+      return {
+        success: false,
+        message: "A member can borrow a maximum of 3 active books.",
+      };
+    }
+
+    const newTransaction = {
+      id: generateTransactionId(),
+      bookId,
+      memberId,
+      issueDate,
+      dueDate,
+      returnDate: null,
+      status: "Issued",
+    };
+
+    setTransactions((current) => [...current, newTransaction]);
+
+    setBooks((currentBooks) =>
+      currentBooks.map((item) =>
+        item.id === bookId
+          ? {
+              ...item,
+              availableCopies: Number(item.availableCopies) - 1,
+            }
+          : item,
+      ),
+    );
+
+    return { success: true };
+  };
+
+  const returnBook = (transactionId) => {
+    const transaction = transactions.find((item) => item.id === transactionId);
+
+    if (!transaction) {
+      return {
+        success: false,
+        message: "Transaction not found.",
+      };
+    }
+
+    if (!["Issued", "Overdue"].includes(transaction.status)) {
+      return {
+        success: false,
+        message: "This book has already been returned.",
+      };
+    }
+
+    const today = new Date().toLocaleDateString("en-CA");
+
+    setTransactions((current) =>
+      current.map((item) =>
+        item.id === transactionId
+          ? {
+              ...item,
+              returnDate: today,
+              status: "Returned",
+            }
+          : item,
+      ),
+    );
+
+    setBooks((currentBooks) =>
+      currentBooks.map((book) =>
+        book.id === transaction.bookId
+          ? {
+              ...book,
+              availableCopies: Math.min(
+                Number(book.totalCopies),
+                Number(book.availableCopies) + 1,
+              ),
+            }
+          : book,
+      ),
+    );
+
+    return { success: true };
+  };
+
   return (
     <LibraryContext.Provider
       value={{
@@ -199,6 +329,9 @@ export function LibraryProvider({ children }) {
         addMember,
         updateMember,
         deleteMember,
+
+        issueBook,
+        returnBook,
       }}
     >
       {children}
