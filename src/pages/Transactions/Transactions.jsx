@@ -1,17 +1,16 @@
-
 import { useContext, useState } from "react";
 import { LibraryContext } from "../../context/LibraryContext";
 
-function getLocalDate() {
+const getLocalDate = () => {
   const date = new Date();
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
-}
+};
 
-function getDateAfterDays(days) {
+const getDateAfterDays = (days) => {
   const date = new Date();
   date.setDate(date.getDate() + days);
 
@@ -20,7 +19,7 @@ function getDateAfterDays(days) {
   const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
-}
+};
 
 const Transactions = () => {
   const { books, members, transactions, issueBook, returnBook } =
@@ -75,9 +74,7 @@ const Transactions = () => {
 
   const transactionRows = transactions.map((transaction) => {
     const book = books.find((item) => item.id === transaction.bookId);
-    const member = members.find(
-      (item) => item.id === transaction.memberId
-    );
+    const member = members.find((item) => item.id === transaction.memberId);
 
     const status =
       ["Issued", "Overdue"].includes(transaction.status) &&
@@ -88,42 +85,43 @@ const Transactions = () => {
     return { ...transaction, book, member, status };
   });
 
-  const activeCount = transactionRows.filter(
-    (transaction) =>
-      ["Issued", "Overdue"].includes(transaction.status)
+  const activeCount = transactionRows.filter((transaction) =>
+    ["Issued", "Overdue"].includes(transaction.status),
   ).length;
 
   const overdueCount = transactionRows.filter(
-    (transaction) => transaction.status === "Overdue"
+    (transaction) => transaction.status === "Overdue",
   ).length;
 
   const availableBooks = books.filter(
-    (book) => Number(book.availableCopies) > 0
+    (book) => Number(book.availableCopies) > 0,
   );
 
-  const activeMembers = members.filter(
-    (member) => member.status === "Active"
-  );
+  const activeMembers = members.filter((member) => member.status === "Active");
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
-          Transactions
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
         <p className="mt-1 text-sm text-gray-500">
           Issue books, process returns, and track overdue books.
         </p>
       </div>
 
       {error && (
-        <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+        <p
+          role="alert"
+          className="rounded-lg bg-red-50 p-3 text-sm text-red-700"
+        >
           {error}
         </p>
       )}
 
       {success && (
-        <p role="status" className="rounded-lg bg-green-50 p-3 text-sm text-green-700">
+        <p
+          role="status"
+          className="rounded-lg bg-green-50 p-3 text-sm text-green-700"
+        >
           {success}
         </p>
       )}
@@ -138,28 +136,25 @@ const Transactions = () => {
 
         <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <p className="text-sm text-gray-500">Active Issues</p>
-          <p className="mt-2 text-3xl font-bold text-blue-600">
-            {activeCount}
-          </p>
+          <p className="mt-2 text-3xl font-bold text-blue-600">{activeCount}</p>
         </div>
 
         <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <p className="text-sm text-gray-500">Overdue Books</p>
-          <p className="mt-2 text-3xl font-bold text-red-600">
-            {overdueCount}
-          </p>
+          <p className="mt-2 text-3xl font-bold text-red-600">{overdueCount}</p>
         </div>
       </div>
 
       <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900">
-          Issue a Book
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-900">Issue a Book</h2>
 
         <form onSubmit={handleIssue} className="mt-5 space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label htmlFor="bookId" className="mb-2 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="bookId"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
                 Select Book
               </label>
               <select
@@ -179,7 +174,10 @@ const Transactions = () => {
             </div>
 
             <div>
-              <label htmlFor="memberId" className="mb-2 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="memberId"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
                 Select Member
               </label>
               <select
@@ -199,7 +197,10 @@ const Transactions = () => {
             </div>
 
             <div>
-              <label htmlFor="issueDate" className="mb-2 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="issueDate"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
                 Issue Date
               </label>
               <input
@@ -214,7 +215,10 @@ const Transactions = () => {
             </div>
 
             <div>
-              <label htmlFor="dueDate" className="mb-2 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="dueDate"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
                 Due Date
               </label>
               <input
@@ -295,8 +299,8 @@ const Transactions = () => {
                           transaction.status === "Returned"
                             ? "bg-green-100 text-green-700"
                             : transaction.status === "Overdue"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-blue-100 text-blue-700"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-blue-100 text-blue-700"
                         }`}
                       >
                         {transaction.status}
@@ -324,6 +328,6 @@ const Transactions = () => {
       </section>
     </div>
   );
-}
+};
 
 export default Transactions;
