@@ -1,29 +1,70 @@
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-
 import { LibraryContext } from "../../context/LibraryContext";
 import MemberTable from "../../components/members/MemberTable";
+import Modal from "../../components/common/Modal";
 
 const Members = () => {
   const { members, deleteMember } = useContext(LibraryContext);
 
-  const handleDeleteMember = (member) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${member.name}"?`
-    );
+ const [modal, setModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "info",
+    showCancel: false,
+    confirmText: "OK",
+    onConfirm: null,
+  });
 
-    if (!confirmed) return;
-
-    const result = deleteMember(member.id);
-
-    if (!result.success) {
-      window.alert(result.message);
-      return;
-    }
-
-    window.alert("Member deleted successfully.");
+  const closeModal = () => {
+    setModal((previous) => ({
+      ...previous,
+      isOpen: false,
+      onConfirm: null,
+    }));
   };
+
+  const handleDeleteMember = (member) => {
+    setModal({
+      isOpen: true,
+      title: "Delete Member?",
+      message: `Are you sure you want to delete "${member.name}"? This action cannot be undone.`,
+      type: "warning",
+      showCancel: true,
+      confirmText: "Delete",
+
+      onConfirm: () => {
+        const result = deleteMember(member.id);
+
+        if (!result.success) {
+          setModal({
+            isOpen: true,
+            title: "Delete Failed",
+            message: result.message,
+            type: "error",
+            showCancel: false,
+            confirmText: "OK",
+            onConfirm: closeModal,
+          });
+
+          return;
+        }
+
+        setModal({
+          isOpen: true,
+          title: "Success!",
+          message: "Member deleted successfully.",
+          type: "success",
+          showCancel: false,
+          confirmText: "OK",
+          onConfirm: closeModal,
+        });
+      },
+    });
+  };
+
 
   return (
     <div className="space-y-6">
@@ -59,6 +100,22 @@ const Members = () => {
       <MemberTable
         members={members}
         onDelete={handleDeleteMember}
+      />
+       <Modal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+        showCancel={modal.showCancel}
+        confirmText={modal.confirmText}
+        onConfirm={() => {
+          if (modal.onConfirm) {
+            modal.onConfirm();
+          } else {
+            closeModal();
+          }
+        }}
+        onCancel={closeModal}
       />
     </div>
   );
