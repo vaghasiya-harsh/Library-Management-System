@@ -1,12 +1,42 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { bookData } from "../data/data";
 
 export const LibraryContext = createContext();
 
+function loadFromStorage(key, fallbackValue) {
+  try {
+    const savedData = localStorage.getItem(key);
+
+    if (savedData === null) {
+      return fallbackValue;
+    }
+
+    const parsedData = JSON.parse(savedData);
+
+    // We expect arrays for books, members and transactions.
+    if (!Array.isArray(parsedData)) {
+      return fallbackValue;
+    }
+
+    return parsedData;
+  } catch (error) {
+    console.error(`Could not load ${key} from localStorage:`, error);
+    return fallbackValue;
+  }
+}
+
 export function LibraryProvider({ children }) {
-  const [books, setBooks] = useState(bookData);
-  const [members, setMembers] = useState([]);
-  const [transactions, setTransactions] = useState([]);
+  const [books, setBooks] = useState(() =>
+    loadFromStorage("library_books_v1", bookData),
+  );
+
+  const [members, setMembers] = useState(() =>
+    loadFromStorage("library_members_v1", []),
+  );
+
+  const [transactions, setTransactions] = useState(() =>
+    loadFromStorage("library_transactions_v1", []),
+  );
 
   // Generate the next book ID, for example BK0101
   const generateBookId = () => {
@@ -312,6 +342,24 @@ export function LibraryProvider({ children }) {
 
     return { success: true };
   };
+
+  // Save books whenever the books state changes.
+  useEffect(() => {
+    localStorage.setItem("library_books_v1", JSON.stringify(books));
+  }, [books]);
+
+  // Save members whenever the members state changes.
+  useEffect(() => {
+    localStorage.setItem("library_members_v1", JSON.stringify(members));
+  }, [members]);
+
+  // Save transactions whenever transactions change.
+  useEffect(() => {
+    localStorage.setItem(
+      "library_transactions_v1",
+      JSON.stringify(transactions),
+    );
+  }, [transactions]);
 
   return (
     <LibraryContext.Provider
