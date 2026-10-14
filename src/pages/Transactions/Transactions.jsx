@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { LibraryContext } from "../../context/LibraryContext";
+import { exportTransactionsCSV } from "../../utils/exportTransactionsCSV";
 
 const getLocalDate = () => {
   const date = new Date();
@@ -101,11 +102,22 @@ const Transactions = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Issue books, process returns, and track overdue books.
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Transactions
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Issue books, process returns, and track overdue books.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => exportTransactionsCSV(transactions, books, members)}
+          className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+        >
+          Export CSV
+        </button>
       </div>
 
       {error && (
