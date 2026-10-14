@@ -1,6 +1,9 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { LibraryContext } from "../../context/LibraryContext";
+import BooksByCategoryChart from "../../components/dashboard/BooksByCategoryChart";
+import MonthlyIssuesChart from "../../components/dashboard/MonthlyIssuesChart";
+import ReturnStatusChart from "../../components/dashboard/ReturnStatusChart";
 
 const getLocalDate = () => {
   const date = new Date();
@@ -119,6 +122,12 @@ const Dashboard = () => {
             <p className="mt-3 text-sm text-gray-500">{stat.description}</p>
           </div>
         ))}
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <BooksByCategoryChart books={books} />
+        <MonthlyIssuesChart transactions={transactions} />
+        <ReturnStatusChart transactions={transactions} />
       </div>
 
       <section className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
