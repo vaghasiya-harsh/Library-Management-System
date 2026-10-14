@@ -1,15 +1,114 @@
 @import "tailwindcss";
 
-@layer base {
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+/* Tailwind v4: enable dark: utilities using the .dark class */
+@custom-variant dark (&:where(.dark, .dark *));
 
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f6fa;
-    color: #222;
-  }
+/* Default Light Theme */
+:root {
+  color-scheme: light;
+  --app-bg: #ffffff;
+  --app-card: #ffffff;
+  --app-text: #111827;
+  --app-muted: #6b7280;
+  --app-border: #e5e7eb;
+  --app-input: #ffffff;
+}
+
+/* Dark Theme */
+html.dark {
+  color-scheme: dark;
+  --app-bg: #030712;
+  --app-card: #111827;
+  --app-text: #f9fafb;
+  --app-muted: #d1d5db;
+  --app-border: #374151;
+  --app-input: #1f2937;
+}
+
+/* Full application background */
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--app-bg);
+  color: var(--app-text);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Automatically adjust common existing Tailwind backgrounds */
+html.dark [class~="bg-white"] {
+  background-color: var(--app-card) !important;
+}
+
+html.dark [class~="bg-gray-50"],
+html.dark [class~="bg-gray-100"] {
+  background-color: #0f172a !important;
+}
+
+html.dark [class~="bg-gray-200"] {
+  background-color: #1f2937 !important;
+}
+
+/* Automatically adjust common dark text classes */
+html.dark [class~="text-black"],
+html.dark [class~="text-gray-900"],
+html.dark [class~="text-gray-800"],
+html.dark [class~="text-gray-700"] {
+  color: #f9fafb !important;
+}
+
+html.dark [class~="text-gray-600"],
+html.dark [class~="text-gray-500"],
+html.dark [class~="text-gray-400"] {
+  color: #d1d5db !important;
+}
+
+/* Borders */
+html.dark [class~="border-gray-100"],
+html.dark [class~="border-gray-200"],
+html.dark [class~="border-gray-300"] {
+  border-color: var(--app-border) !important;
+}
+
+/* Inputs and textareas */
+input,
+select,
+textarea {
+  background-color: var(--app-input);
+  color: var(--app-text);
+  border-color: var(--app-border);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--app-muted);
+}
+
+/* Tables */
+html.dark th,
+html.dark td {
+  border-color: var(--app-border);
+}
+
+html.dark tr:hover {
+  background-color: #1f2937;
+}
+
+/* Smooth theme changes for common components */
+button,
+a,
+input,
+select,
+textarea,
+section,
+article,
+aside {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
