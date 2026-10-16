@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { LibraryContext } from "../../context/LibraryContext";
 import BookTable from "../../components/books/BookTable";
 import Modal from "../../components/common/Modal";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 
 const PAGE_SIZE = 10;
 
 const Books = () => {
   const { books, deleteBook } = useContext(LibraryContext);
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search, 300);
   const [category, setCategory] = useState("All");
   const [availability, setAvailability] = useState("All");
   const [sortBy, setSortBy] = useState("title-asc");
@@ -33,7 +35,7 @@ const Books = () => {
 
   // 1. Search + 2. Filter + 3. Sort
   const filteredBooks = useMemo(() => {
-    const query = search.trim().toLowerCase();
+    const query = debouncedSearch.trim().toLowerCase();
 
     let result = books.filter((book) => {
       const matchesSearch = [book.id, book.title, book.author, book.isbn].some(
@@ -73,7 +75,7 @@ const Books = () => {
     });
 
     return result;
-  }, [books, search, category, availability, sortBy]);
+  }, [books, debouncedSearch, category, availability, sortBy]);
 
   // 4. Pagination
   const totalPages = Math.max(1, Math.ceil(filteredBooks.length / PAGE_SIZE));
