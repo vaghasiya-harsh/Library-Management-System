@@ -10,26 +10,31 @@ import MemberDetails from "./pages/Members/MemberDetails";
 import Transactions from "./pages/Transactions/Transactions";
 import AddMember from "./pages/Members/AddMember";
 import EditMember from "./pages/Members/EditMember";
+import Login from "./pages/auth/Login";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/login" element={<Login />} />
 
-      <Route element={<Layout />}>
-        <Route path="/dashboard" element={<Dashboard />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-        <Route path="/books" element={<Books />} />
-        <Route path="/books/add" element={<AddBook />} />
-        <Route path="/books/:id/edit" element={<EditBook />} />
-        <Route path="/books/:id" element={<BookDetails />} />
+        <Route element={<Layout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/books" element={<Books />} />
+          <Route path="/books/add" element={<AddBook />} />
+          <Route path="/books/:id/edit" element={<EditBook />} />
+          <Route path="/books/:id" element={<BookDetails />} />
 
-        <Route path="/members" element={<Members />} />
-        <Route path="/members/add" element={<AddMember />} />
-        <Route path="/members/:id/edit" element={<EditMember />} />
-        <Route path="/members/:id" element={<MemberDetails />} />
+          <Route path="/members" element={<Members />} />
+          <Route path="/members/add" element={<AddMember />} />
+          <Route path="/members/:id/edit" element={<EditMember />} />
+          <Route path="/members/:id" element={<MemberDetails />} />
 
-        <Route path="/transactions" element={<Transactions />} />
+          <Route path="/transactions" element={<Transactions />} />
+        </Route>
       </Route>
     </Routes>
   );

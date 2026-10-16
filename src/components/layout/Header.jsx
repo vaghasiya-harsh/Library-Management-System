@@ -1,8 +1,18 @@
 import { useTheme } from "../../context/ThemeContext";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
+
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <header
@@ -12,9 +22,7 @@ const Header = () => {
           : "border-gray-200 bg-white text-gray-900"
       }`}
     >
-      <h1 className="text-xl font-semibold">
-        Library Management System
-      </h1>
+      <h1 className="text-xl font-semibold">Library Management System</h1>
 
       <div className="flex items-center gap-4">
         <button
@@ -30,13 +38,25 @@ const Header = () => {
           {isDark ? "🌙 Dark Mode" : "☀️ Light Mode"}
         </button>
 
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium dark:border-gray-700 dark:text-gray-100"
+        >
+          Logout
+        </button>
+
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
           A
         </div>
 
         <div>
           <p className="text-sm font-medium">Admin</p>
-          <p className={isDark ? "text-xs text-gray-300" : "text-xs text-gray-500"}>
+          <p
+            className={
+              isDark ? "text-xs text-gray-300" : "text-xs text-gray-500"
+            }
+          >
             Administrator
           </p>
         </div>
