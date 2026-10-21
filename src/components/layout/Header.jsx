@@ -44,7 +44,7 @@ const Header = () => {
                 : "border-gray-300 bg-white text-gray-900 hover:bg-gray-100"
             }`}
           >
-            {isDark ? "☀️ Light Mode" : "🌙 Dark Mode"}
+            {isDark ? "🌙 Dark Mode"  : "☀️ Light Mode"}
           </button>
 
           {/* Admin Profile */}
