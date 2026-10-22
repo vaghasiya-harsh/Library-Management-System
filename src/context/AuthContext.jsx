@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
 
   const login = (email, password) => {
     // Demo credentials only. Never use hardcoded credentials in production.
-    if (email === "admin@library.com" && password === "Admin@123") {
+    if (email === "vaghasiyah3@gmail.com" && password === "Harsh@123") {
       try {
         localStorage.setItem("library_logged_in", "true");
       } catch {
