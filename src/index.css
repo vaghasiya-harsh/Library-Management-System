@@ -3,112 +3,515 @@
 /* Tailwind v4: enable dark: utilities using the .dark class */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Default Light Theme */
+@theme {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Light Theme Variables */
 :root {
   color-scheme: light;
-  --app-bg: #ffffff;
+  --app-bg: #f0f4f9;
   --app-card: #ffffff;
-  --app-text: #111827;
-  --app-muted: #6b7280;
-  --app-border: #e5e7eb;
+  --app-text: #090d16;
+  --app-muted: #475569;
+  --app-border: #cbd5e1;
   --app-input: #ffffff;
+  --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
 }
 
-/* Dark Theme */
+/* Dark Theme Variables */
 html.dark {
   color-scheme: dark;
-  --app-bg: #030712;
-  --app-card: #111827;
-  --app-text: #f9fafb;
-  --app-muted: #d1d5db;
-  --app-border: #374151;
-  --app-input: #1f2937;
+  --app-bg: #060913;
+  --app-card: #0b1120;
+  --app-text: #f8fafc;
+  --app-muted: #94a3b8;
+  --app-border: #1e293b;
+  --app-input: #111827;
+  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);
 }
 
-/* Full application background */
 html,
 body,
 #root {
   min-height: 100%;
 }
 
+#root {
+  position: relative;
+  z-index: 1;
+}
+
 body {
   margin: 0;
   background-color: var(--app-bg);
   color: var(--app-text);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  font-family: var(--font-sans);
+  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+  position: relative;
 }
 
-/* Automatically adjust common existing Tailwind backgrounds */
-html.dark [class~="bg-white"] {
-  background-color: var(--app-card) !important;
+/* Modern Dynamic Light Wallpaper: Soft Pearl-Slate with Multi-tone Ambient Aurora Gradients & Blueprint Mesh */
+body {
+  background-image: 
+    radial-gradient(circle at 10% 12%, rgba(99, 102, 241, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 90% 18%, rgba(6, 182, 212, 0.07) 0%, transparent 45%),
+    radial-gradient(circle at 50% 85%, rgba(168, 85, 247, 0.05) 0%, transparent 45%),
+    radial-gradient(rgba(100, 116, 139, 0.16) 1.2px, transparent 1.2px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px;
+  background-attachment: fixed;
 }
 
-html.dark [class~="bg-gray-50"],
-html.dark [class~="bg-gray-100"] {
-  background-color: #0f172a !important;
+/* Living Ambient Aurora Drift in Light Mode */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(700px circle at 15% 25%, rgba(99, 102, 241, 0.06), transparent 65%),
+    radial-gradient(750px circle at 85% 65%, rgba(6, 182, 212, 0.05), transparent 65%),
+    radial-gradient(600px circle at 45% 90%, rgba(168, 85, 247, 0.04), transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+  animation: auroraDrift 24s ease-in-out infinite alternate;
 }
 
-html.dark [class~="bg-gray-200"] {
-  background-color: #1f2937 !important;
+/* Modern Dynamic Deep Obsidian-Indigo Celestial Canvas in Dark Mode */
+html.dark body {
+  background-color: #060913;
+  background-image: 
+    radial-gradient(circle at 12% 15%, rgba(99, 102, 241, 0.14) 0%, transparent 45%),
+    radial-gradient(circle at 88% 20%, rgba(6, 182, 212, 0.10) 0%, transparent 50%),
+    radial-gradient(circle at 50% 85%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(rgba(148, 163, 184, 0.075) 1.2px, transparent 1.2px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px;
+  background-attachment: fixed;
 }
 
-/* Automatically adjust common dark text classes */
-html.dark [class~="text-black"],
-html.dark [class~="text-gray-900"],
-html.dark [class~="text-gray-800"],
-html.dark [class~="text-gray-700"] {
-  color: #f9fafb !important;
+/* Deep Cosmic Aurora Drift in Dark Mode */
+html.dark body::before {
+  background: 
+    radial-gradient(650px circle at 15% 25%, rgba(99, 102, 241, 0.09), transparent 65%),
+    radial-gradient(750px circle at 85% 65%, rgba(6, 182, 212, 0.07), transparent 65%),
+    radial-gradient(550px circle at 45% 90%, rgba(139, 92, 246, 0.06), transparent 65%);
 }
 
-html.dark [class~="text-gray-600"],
-html.dark [class~="text-gray-500"],
-html.dark [class~="text-gray-400"] {
-  color: #d1d5db !important;
-}
+/* ========================================================
+   Form Inputs & Controls - Complete Dark Mode Integration
+   ======================================================== */
 
-/* Borders */
-html.dark [class~="border-gray-100"],
-html.dark [class~="border-gray-200"],
-html.dark [class~="border-gray-300"] {
-  border-color: var(--app-border) !important;
-}
-
-/* Inputs and textareas */
-input,
-select,
-textarea {
-  background-color: var(--app-input);
-  color: var(--app-text);
-  border-color: var(--app-border);
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: var(--app-muted);
-}
-
-/* Tables */
-html.dark th,
-html.dark td {
-  border-color: var(--app-border);
-}
-
-html.dark tr:hover {
-  background-color: #1f2937;
-}
-
-/* Smooth theme changes for common components */
-button,
-a,
+/* Ensure native inputs, selects, datepickers, and scrollbars respect dark mode */
 input,
 select,
 textarea,
-section,
-article,
-aside {
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
+button {
+  color-scheme: light;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea,
+html.dark button {
+  color-scheme: dark;
+}
+
+/* Fail-safe: Ensure all inputs, selects and dropdowns have 100% visible high-contrast text in dark mode */
+html.dark input,
+html.dark select,
+html.dark textarea {
+  color: #f8fafc;
+}
+
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  border-color: #38bdf8 !important;
+}
+
+/* Fix native select options in dark mode and light mode */
+html.dark select option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+select option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+/* ========================================================
+   Modern Dynamic View Transitions API - Circular Ripple Wave
+   ======================================================== */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+.dark::view-transition-old(root) {
+  z-index: 9999;
+}
+
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* Fallback theme transition animation */
+.theme-transitioning,
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition-delay: 0s !important;
+}
+
+/* Clean browser autofill for light mode */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: #0f172a !important;
+  -webkit-box-shadow: 0 0 0px 1000px #f8fafc inset !important;
+  box-shadow: 0 0 0px 1000px #f8fafc inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: #4f46e5;
+}
+
+/* Fix browser autofill in dark mode (Chrome, Edge, Safari, Brave) */
+html.dark input:-webkit-autofill,
+html.dark input:-webkit-autofill:hover,
+html.dark input:-webkit-autofill:focus,
+html.dark input:-webkit-autofill:active,
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active,
+html.dark textarea:-webkit-autofill,
+html.dark textarea:-webkit-autofill:hover,
+html.dark textarea:-webkit-autofill:focus,
+.dark textarea:-webkit-autofill,
+html.dark select:-webkit-autofill,
+html.dark select:-webkit-autofill:hover,
+html.dark select:-webkit-autofill:focus,
+.dark select:-webkit-autofill {
+  -webkit-text-fill-color: #f8fafc !important;
+  -webkit-box-shadow: 0 0 0px 1000px #0b1120 inset !important;
+  box-shadow: 0 0 0px 1000px #0b1120 inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: #38bdf8;
+}
+
+/* Modern Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+html.dark .glass-panel {
+  background: rgba(11, 17, 32, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+html.dark .glass-nav {
+  background: rgba(6, 9, 19, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Card Hover Effects */
+.book-card-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.book-card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+html.dark .book-card-hover:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.2);
+}
+
+/* ========================================================
+   Modern Dynamic Animations & Micro-Interactions
+   ======================================================== */
+
+/* Smooth Floating Animations */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(0.8deg);
+  }
+}
+
+@keyframes floatReverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(8px) rotate(-0.8deg);
+  }
+}
+
+/* Ambient Aurora Drift for Dynamic Atmosphere */
+@keyframes auroraDrift {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -25px) scale(1.12);
+  }
+  66% {
+    transform: translate(-25px, 20px) scale(0.92);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+/* Breathing Glow animation */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.06);
+  }
+}
+
+/* Luxury Shimmer effect */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Rotating Gradient Ring */
+@keyframes gradientSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatReverse 7s ease-in-out infinite;
+}
+
+.animate-aurora-drift {
+  animation: auroraDrift 16s ease-in-out infinite alternate;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 5s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: gradientSpin 12s linear infinite;
+}
+
+/* Floating Island Header Spring Animations */
+@keyframes headerSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.96);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(3px) scale(1.005);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-header-enter {
+  animation: headerSlideDown 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.floating-island-navbar {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.35s ease,
+              box-shadow 0.35s ease,
+              border-color 0.35s ease;
+  will-change: transform, opacity;
+}
+
+/* Dynamic Dot Mesh Background */
+.bg-grid-mesh {
+  background-image: radial-gradient(rgba(99, 102, 241, 0.08) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+}
+
+html.dark .bg-grid-mesh {
+  background-image: radial-gradient(rgba(56, 189, 248, 0.08) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+}
+
+/* Interactive Card with 3D Elevation & High Contrast Definition */
+.interactive-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
+}
+
+.interactive-card:hover {
+  transform: translateY(-8px) scale(1.015);
+  box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.12), 0 0 25px rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.45);
+}
+
+html.dark .interactive-card {
+  background-color: rgba(11, 17, 32, 0.9);
+  border: 1px solid rgba(30, 41, 59, 0.9);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .interactive-card:hover {
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(99, 102, 241, 0.25);
+  border-color: rgba(99, 102, 241, 0.5);
+}
+
+/* Dynamic Specular Sheen on Hover */
+.card-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-sheen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%
+  );
+  transition: left 0.75s ease;
+  z-index: 25;
+  pointer-events: none;
+}
+
+.interactive-card:hover .card-sheen::before,
+.group:hover .card-sheen::before {
+  left: 150%;
+}
+
+/* Active Glowing Beacons */
+.beacon-emerald {
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+}
+
+.beacon-cyan {
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+}
+
+.beacon-indigo {
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+}
+
+.beacon-rose {
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.6);
+}
+
+/* Shimmer badge utility */
+.shimmer-badge {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-badge::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.25) 20%,
+    rgba(255, 255, 255, 0.6) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer 2.5s infinite;
+  content: '';
 }

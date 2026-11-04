@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import Home from "./pages/Home/Home";
 import Layout from "./components/layout/Layout";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Books from "./pages/Books/Books";
@@ -12,21 +13,33 @@ import AddMember from "./pages/Members/AddMember";
 import EditMember from "./pages/Members/EditMember";
 import Login from "./pages/auth/Login";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { useAuth } from "./context/AuthContext";
 
 const App = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <Routes>
+      {/* New Visitor Auth Gate: Directs to login/signup unless authenticated */}
+      <Route
+        path="/"
+        element={isAuthenticated ? <Home /> : <Navigate to="/login" replace />}
+      />
+      <Route
+        path="/books/:id"
+        element={isAuthenticated ? <BookDetails /> : <Navigate to="/login" replace />}
+      />
+
+      {/* Authentication Gateway with Log In & Sign Up */}
       <Route path="/login" element={<Login />} />
 
+      {/* Management Console (Protected) */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/books" element={<Books />} />
           <Route path="/books/add" element={<AddBook />} />
           <Route path="/books/:id/edit" element={<EditBook />} />
-          <Route path="/books/:id" element={<BookDetails />} />
 
           <Route path="/members" element={<Members />} />
           <Route path="/members/add" element={<AddMember />} />
@@ -36,6 +49,9 @@ const App = () => {
           <Route path="/transactions" element={<Transactions />} />
         </Route>
       </Route>
+
+      {/* Catch-all redirect to Home */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

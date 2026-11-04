@@ -1199,4 +1199,154 @@ export const bookData = [
     "availableCopies": 7,
     "image": "https://covers.openlibrary.org/b/isbn/9780262510875-L.jpg"
   }
-]
+];
+
+export const memberData = [
+  {
+    id: "MEM001",
+    name: "Aarav Sharma",
+    email: "aarav.sharma@library.org",
+    phone: "9876543210",
+    course: "Computer Science & Engineering",
+    joiningDate: "2024-08-15",
+    status: "Active"
+  },
+  {
+    id: "MEM002",
+    name: "Ananya Patel",
+    email: "ananya.patel@library.org",
+    phone: "9823456789",
+    course: "Literature & Creative Arts",
+    joiningDate: "2024-09-01",
+    status: "Active"
+  },
+  {
+    id: "MEM003",
+    name: "Rohan Verma",
+    email: "rohan.verma@library.org",
+    phone: "9765432109",
+    course: "Data Science & AI",
+    joiningDate: "2024-10-12",
+    status: "Active"
+  },
+  {
+    id: "MEM004",
+    name: "Priya Nair",
+    email: "priya.nair@library.org",
+    phone: "9912345678",
+    course: "Business Administration",
+    joiningDate: "2024-11-05",
+    status: "Active"
+  },
+  {
+    id: "MEM005",
+    name: "Devendra Mehta",
+    email: "devendra.mehta@library.org",
+    phone: "9845671230",
+    course: "Electrical Engineering",
+    joiningDate: "2025-01-20",
+    status: "Active"
+  },
+  {
+    id: "MEM006",
+    name: "Isha Sundaram",
+    email: "isha.sundaram@library.org",
+    phone: "9811223344",
+    course: "Philosophy & Ethics",
+    joiningDate: "2025-02-14",
+    status: "Inactive"
+  },
+  {
+    id: "MEM007",
+    name: "Kabir Joshi",
+    email: "kabir.joshi@library.org",
+    phone: "9733445566",
+    course: "Physics & Astronomy",
+    joiningDate: "2025-03-10",
+    status: "Active"
+  },
+  {
+    id: "MEM008",
+    name: "Sneha Kulkarni",
+    email: "sneha.kulkarni@library.org",
+    phone: "9899887766",
+    course: "Mathematics & Statistics",
+    joiningDate: "2025-04-02",
+    status: "Active"
+  }
+];
+
+export const transactionData = [
+  {
+    id: "TRX001",
+    bookId: "BK0001",
+    memberId: "MEM001",
+    issueDate: "2026-10-15",
+    dueDate: "2026-10-25",
+    returnDate: null,
+    status: "Issued"
+  },
+  {
+    id: "TRX002",
+    bookId: "BK0002",
+    memberId: "MEM002",
+    issueDate: "2026-10-18",
+    dueDate: "2026-10-28",
+    returnDate: null,
+    status: "Issued"
+  },
+  {
+    id: "TRX003",
+    bookId: "BK0003",
+    memberId: "MEM003",
+    issueDate: "2026-10-01",
+    dueDate: "2026-10-10",
+    returnDate: null,
+    status: "Overdue"
+  },
+  {
+    id: "TRX004",
+    bookId: "BK0005",
+    memberId: "MEM004",
+    issueDate: "2026-09-20",
+    dueDate: "2026-09-30",
+    returnDate: "2026-09-28",
+    status: "Returned"
+  },
+  {
+    id: "TRX005",
+    bookId: "BK0006",
+    memberId: "MEM005",
+    issueDate: "2026-10-12",
+    dueDate: "2026-10-22",
+    returnDate: null,
+    status: "Issued"
+  },
+  {
+    id: "TRX006",
+    bookId: "BK0018",
+    memberId: "MEM007",
+    issueDate: "2026-09-15",
+    dueDate: "2026-09-25",
+    returnDate: "2026-09-24",
+    status: "Returned"
+  },
+  {
+    id: "TRX007",
+    bookId: "BK0020",
+    memberId: "MEM008",
+    issueDate: "2026-10-05",
+    dueDate: "2026-10-15",
+    returnDate: null,
+    status: "Overdue"
+  },
+  {
+    id: "TRX008",
+    bookId: "BK0097",
+    memberId: "MEM001",
+    issueDate: "2026-10-19",
+    dueDate: "2026-10-29",
+    returnDate: null,
+    status: "Issued"
+  }
+];

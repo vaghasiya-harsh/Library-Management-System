@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { bookData } from "../data/data";
+import { bookData, memberData, transactionData } from "../data/data";
 
 export const LibraryContext = createContext();
 
@@ -13,8 +13,8 @@ function loadFromStorage(key, fallbackValue) {
 
     const parsedData = JSON.parse(savedData);
 
-    // We expect arrays for books, members and transactions.
-    if (!Array.isArray(parsedData)) {
+    // We expect non-empty arrays for initial data
+    if (!Array.isArray(parsedData) || parsedData.length === 0) {
       return fallbackValue;
     }
 
@@ -27,15 +27,15 @@ function loadFromStorage(key, fallbackValue) {
 
 export function LibraryProvider({ children }) {
   const [books, setBooks] = useState(() =>
-    loadFromStorage("library_books_v1", bookData),
+    loadFromStorage("library_books_v2", bookData),
   );
 
   const [members, setMembers] = useState(() =>
-    loadFromStorage("library_members_v1", []),
+    loadFromStorage("library_members_v1", memberData),
   );
 
   const [transactions, setTransactions] = useState(() =>
-    loadFromStorage("library_transactions_v1", []),
+    loadFromStorage("library_transactions_v1", transactionData),
   );
 
   // Generate the next book ID, for example BK0101
@@ -112,7 +112,7 @@ export function LibraryProvider({ children }) {
 
     setMembers((currentMembers) => [...currentMembers, newMember]);
 
-    return { success: true };
+    return { success: true, member: newMember };
   };
 
   // UPDATE
@@ -292,7 +292,7 @@ export function LibraryProvider({ children }) {
       ),
     );
 
-    return { success: true };
+    return { success: true, transaction: newTransaction };
   };
 
   const returnBook = (transactionId) => {
@@ -345,7 +345,7 @@ export function LibraryProvider({ children }) {
 
   // Save books whenever the books state changes.
   useEffect(() => {
-    localStorage.setItem("library_books_v1", JSON.stringify(books));
+    localStorage.setItem("library_books_v2", JSON.stringify(books));
   }, [books]);
 
   // Save members whenever the members state changes.
