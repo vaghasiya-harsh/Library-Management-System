@@ -734,8 +734,8 @@ const BookCoverImage = ({ book, className = "", alt = "" }) => {
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         {/* 3D Physical Spine Shadow */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-black/60 via-black/20 to-transparent z-10" />
-        <div className="pointer-events-none absolute inset-y-0 left-3.5 w-[1px] bg-white/15 z-10" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-4 bg-linear-to-r from-black/60 via-black/20 to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 left-3.5 w-px bg-white/15 z-10" />
       </div>
     );
   }
@@ -743,14 +743,14 @@ const BookCoverImage = ({ book, className = "", alt = "" }) => {
   // Bespoke 100% Unique Hardcover Physical Book Cover
   return (
     <div
-      className={`relative h-full w-full select-none overflow-hidden bg-gradient-to-br ${palette.bg} text-white shadow-md transition-all duration-300 ${className}`}
+      className={`relative h-full w-full select-none overflow-hidden bg-linear-to-br ${palette.bg} text-white shadow-md transition-all duration-300 ${className}`}
       style={{
         boxShadow: `inset -2px 0 6px rgba(0,0,0,0.5), inset 2px 0 4px rgba(255,255,255,0.15)`,
       }}
     >
       {/* 3D Physical Spine Fold & Crease Lines */}
-      <div className="absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-black/70 via-black/25 to-transparent z-20 pointer-events-none" />
-      <div className="absolute inset-y-0 left-3.5 w-[1px] bg-white/20 z-20 pointer-events-none" />
+      <div className="absolute inset-y-0 left-0 w-4 bg-linear-to-br from-black/70 via-black/25 to-transparent z-20 pointer-events-none" />
+      <div className="absolute inset-y-0 left-3.5 w-px bg-white/20 z-20 pointer-events-none" />
 
       {/* ========================================================
           LAYOUT 0: The Heritage Folio (Ornate Dual Filigree Frame)
@@ -783,7 +783,7 @@ const BookCoverImage = ({ book, className = "", alt = "" }) => {
             </h4>
 
             <div
-              className="mx-auto my-1.5 h-[2px] w-8 rounded-full"
+              className="mx-auto my-1.5 h-0.5 w-8 rounded-full"
               style={{ backgroundColor: palette.accent }}
             />
 
@@ -828,7 +828,7 @@ const BookCoverImage = ({ book, className = "", alt = "" }) => {
             <div className="p-2 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-inner">
               {renderEmblem(motifIndex, palette.accent)}
             </div>
-            <div className="h-10 w-[2px] bg-white/20 rounded-full" />
+            <div className="h-10 w-0.5 bg-white/20 rounded-full" />
             <div className="text-[9px] font-mono opacity-80 uppercase tracking-widest leading-tight">
               <span>EDITION</span>
               <br />
@@ -985,7 +985,7 @@ const BookCoverImage = ({ book, className = "", alt = "" }) => {
             </h4>
 
             <div
-              className="mx-auto mt-2 h-[2px] w-6 rounded-full"
+              className="mx-auto mt-2 h-0.5 w-6 rounded-full"
               style={{ backgroundColor: palette.accent }}
             />
 
@@ -1128,9 +1128,9 @@ const BookCoverImage = ({ book, className = "", alt = "" }) => {
             </h4>
 
             <div className="flex items-center gap-1.5 my-1.5 opacity-60">
-              <span className="h-[1px] w-4 bg-white" />
+              <span className="h-px w-4 bg-white" />
               <span className="text-[8px] font-serif">❖</span>
-              <span className="h-[1px] w-4 bg-white" />
+              <span className="h-px w-4 bg-white" />
             </div>
 
             <p
