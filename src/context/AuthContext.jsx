@@ -69,14 +69,8 @@ export function AuthProvider({ children }) {
   };
 
   const login = (email, password) => {
-    const cleanEmail = String(email || "").trim().toLowerCase();
-    const cleanPass = String(password || "").trim();
-
-    const user = registeredUsers.find(
-      (u) => u.email.toLowerCase() === cleanEmail && u.password === cleanPass
-    );
-
-    if (user) {
+    // Demo credentials only. Never use hardcoded credentials in production.
+    if (email === "admin@library.com" && password === "Admin@123") {
       try {
         localStorage.setItem("library_logged_in", "true");
         localStorage.setItem("library_current_user", JSON.stringify(user));
