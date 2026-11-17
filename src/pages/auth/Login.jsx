@@ -132,7 +132,7 @@ function Login() {
       </div>
 
       {/* Dynamic Background Aurora Glow Orbs */}
-      <div className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-gradient-to-tr from-indigo-500/20 via-cyan-400/20 to-purple-500/15 blur-3xl dark:from-indigo-600/25 dark:via-cyan-500/15" />
+      <div className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-125 w-175 -translate-x-1/2 rounded-full `bg-gradient-to-r` from-indigo-500/20 via-cyan-400/20 to-purple-500/15 blur-3xl dark:from-indigo-600/25 dark:via-cyan-500/15" />
       <div className="pointer-events-none absolute bottom-12 right-12 -z-10 h-80 w-80 rounded-full bg-cyan-400/15 blur-3xl" />
       <div className="pointer-events-none absolute top-1/3 -left-20 -z-10 h-72 w-72 rounded-full bg-indigo-500/15 blur-3xl" />
 
@@ -140,12 +140,12 @@ function Login() {
         {/* Main Card */}
         <div className="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white/95 p-6 sm:p-9 shadow-2xl backdrop-blur-2xl dark:border-indigo-500/25 dark:bg-[#070b18]/95 dark:shadow-2xl dark:shadow-indigo-950/80 transition-all duration-300">
           {/* Subtle Top Ambient Aurora Glow Line */}
-          <div className="pointer-events-none absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-indigo-500/60 dark:via-cyan-400/60 to-transparent" />
+          <div className="pointer-events-none absolute top-0 left-8 right-8 h-px `bg-gradient-to-r` from-transparent via-indigo-500/60 dark:via-cyan-400/60 to-transparent" />
 
           {/* Logo & Header */}
           <div className="text-center">
             <Link to="/" className="inline-flex items-center gap-2 group">
-              <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-cyan-500 text-white shadow-lg shadow-indigo-500/25 transition group-hover:scale-105">
+              <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl `bg-gradient-to-r` from-indigo-500 via-indigo-600 to-cyan-500 text-white shadow-lg shadow-indigo-500/25 transition group-hover:scale-105">
                 <BookOpen className="h-6 w-6 sm:h-7 sm:w-7" />
               </div>
             </Link>
@@ -162,7 +162,7 @@ function Login() {
             <div className="mt-6 space-y-5 animate-in fade-in duration-300">
               <div className="rounded-2xl border border-indigo-200/90 bg-indigo-50/70 p-4 dark:border-indigo-900/50 dark:bg-indigo-950/40">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-indigo-600 to-cyan-600 text-white font-black text-sm shadow-xs">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full `bg-gradient-to-r` from-indigo-600 to-cyan-600 text-white font-black text-sm shadow-xs">
                     {currentUser.name?.charAt(0) || "U"}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -195,7 +195,7 @@ function Login() {
                     logout();
                     handleTabSwitch("signup");
                   }}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 py-3 text-xs font-bold text-white shadow-md shadow-indigo-500/25 hover:opacity-95 active:scale-98 transition"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl `bg-gradient-to-r` from-indigo-600 to-cyan-600 py-3 text-xs font-bold text-white shadow-md shadow-indigo-500/25 hover:opacity-95 active:scale-98 transition"
                 >
                   <UserPlus className="h-4 w-4" />
                   <span>Sign Up / Register Another Account</span>
@@ -337,7 +337,7 @@ function Login() {
 
                   <button
                     type="submit"
-                    className="w-full rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 py-3 text-xs font-bold text-white shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:shadow-indigo-500/40 hover:scale-[1.01] active:scale-[0.98]"
+                    className="w-full rounded-xl `bg-gradient-to-r` from-indigo-600 via-indigo-500 to-cyan-500 py-3 text-xs font-bold text-white shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:shadow-indigo-500/40 hover:scale-[1.01] active:scale-[0.98]"
                   >
                     Sign In & Enter Library
                   </button>
@@ -496,7 +496,7 @@ function Login() {
 
                   <button
                     type="submit"
-                    className="w-full rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 py-3 text-xs font-bold text-white shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:shadow-indigo-500/40 hover:scale-[1.01] active:scale-[0.98]"
+                    className="w-full rounded-xl `bg-gradient-to-r` from-indigo-600 via-indigo-500 to-cyan-500 py-3 text-xs font-bold text-white shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:shadow-indigo-500/40 hover:scale-[1.01] active:scale-[0.98]"
                   >
                     Create Account & Enter
                   </button>
