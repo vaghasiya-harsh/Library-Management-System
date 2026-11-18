@@ -12,6 +12,7 @@ import Transactions from "./pages/Transactions/Transactions";
 import AddMember from "./pages/Members/AddMember";
 import EditMember from "./pages/Members/EditMember";
 import Login from "./pages/auth/Login";
+import Unauthorized from "./pages/auth/Unauthorized";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
 
@@ -20,7 +21,7 @@ const App = () => {
 
   return (
     <Routes>
-      {/* New Visitor Auth Gate: Directs to login/signup unless authenticated */}
+      {/* Public Home Catalog: Accessible to authenticated users (both Readers and Admins) */}
       <Route
         path="/"
         element={isAuthenticated ? <Home /> : <Navigate to="/login" replace />}
@@ -33,8 +34,11 @@ const App = () => {
       {/* Authentication Gateway with Log In & Sign Up */}
       <Route path="/login" element={<Login />} />
 
-      {/* Management Console (Protected) */}
-      <Route element={<ProtectedRoute />}>
+      {/* 403 Forbidden / Access Denied Gate */}
+      <Route path="/unauthorized" element={<Unauthorized />} />
+
+      {/* Management Console (Protected - Strictly Admin Only) */}
+      <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/books" element={<Books />} />

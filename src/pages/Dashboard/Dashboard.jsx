@@ -222,7 +222,7 @@ const Dashboard = () => {
 
           <Link
             to="/books"
-            className="flex items-center gap-1.5 rounded-xl border border-slate-300/80 bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-indigo-600 transition hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-300 active:scale-95 dark:border-slate-800 dark:bg-slate-800/60 dark:text-cyan-400 dark:hover:bg-slate-800 dark:hover:text-cyan-300"
+            className="flex items-center gap-1.5 rounded-xl border border-slate-300/80 bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-indigo-600 transition hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-300 active:scale-95 dark:border-slate-800 dark:bg-slate-800/60 dark:text-cyan-400 dark:hover:bg-slate-800 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
           >
             <span>View All Books Inventory</span>
             <ArrowRight className="h-3.5 w-3.5" />
@@ -265,7 +265,7 @@ const Dashboard = () => {
                 <button
                   type="button"
                   onClick={() => setQuickViewBook(book)}
-                  className="flex-1 flex items-center justify-center gap-1 rounded-lg border border-slate-200/80 bg-white px-2 py-1.5 text-[10px] font-bold text-slate-700 shadow-2xs transition hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-cyan-300"
+                  className="flex-1 flex items-center justify-center gap-1 rounded-lg border border-slate-200/80 bg-white px-2 py-1.5 text-[10px] font-bold text-slate-700 shadow-2xs transition hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
                 >
                   <Eye className="h-3 w-3" />
                   Preview
@@ -310,7 +310,7 @@ const Dashboard = () => {
 
           <Link
             to="/transactions"
-            className="flex items-center gap-1.5 rounded-xl border border-slate-300/80 bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-indigo-600 transition hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-300 active:scale-95 dark:border-slate-800 dark:bg-slate-800/60 dark:text-cyan-400 dark:hover:bg-slate-800 dark:hover:text-cyan-300"
+            className="flex items-center gap-1.5 rounded-xl border border-slate-300/80 bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-indigo-600 transition hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-300 active:scale-95 dark:border-slate-800 dark:bg-slate-800/60 dark:text-cyan-400 dark:hover:bg-slate-800 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
           >
             <span>View All Transactions</span>
             <ArrowRight className="h-3.5 w-3.5" />

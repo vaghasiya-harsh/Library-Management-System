@@ -42,7 +42,7 @@ const FeaturedBooksSpotlight = ({ books = [], featuredBooks, onQuickView, onBorr
                 className={`flex items-center gap-2 shrink-0 rounded-xl px-4 py-2 text-xs transition active:scale-95 ${
                   selectedIdx === idx
                     ? "bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-500/25 ring-2 ring-indigo-500/30 font-bold"
-                    : "bg-white text-slate-800 font-bold border border-slate-300/80 shadow-2xs hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700 dark:hover:text-cyan-300"
+                    : "bg-white text-slate-800 font-bold border border-slate-300/80 shadow-2xs hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
                 }`}
               >
                 <span className="opacity-75">{book.category}:</span>

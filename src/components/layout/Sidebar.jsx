@@ -99,7 +99,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         <div className="p-4">
           <Link
             to="/"
-            className="flex items-center justify-between rounded-xl border border-indigo-100 bg-indigo-50/70 p-3 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100/90 hover:border-indigo-200 hover:text-indigo-800 dark:border-indigo-900/50 dark:bg-indigo-950/40 dark:text-cyan-300 dark:hover:bg-indigo-900/40 dark:hover:text-cyan-200"
+            className="flex items-center justify-between rounded-xl border border-indigo-100 bg-indigo-50/70 p-3 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100/90 hover:border-indigo-200 hover:text-indigo-800 dark:border-indigo-900/50 dark:bg-indigo-950/40 dark:text-cyan-300 dark:hover:bg-indigo-900/40 dark:hover:text-cyan-200 dark:hover:border-cyan-500/40"
           >
             <div className="flex items-center gap-2">
               <Home className="h-4 w-4 text-indigo-600 dark:text-cyan-400" />

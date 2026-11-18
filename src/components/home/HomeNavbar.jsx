@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, ShieldCheck, LayoutDashboard, Menu, X, BookmarkCheck, UserPlus, LogOut } from "lucide-react";
-import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import ThemeToggle from "../common/ThemeToggle";
 
 const HomeNavbar = ({ onOpenMyBooks }) => {
-  const { theme, toggleTheme } = useTheme();
   const { isAuthenticated, currentUser, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
-
-  const isDark = theme === "dark";
 
   // Dynamic Scroll & Reading Progress Listener
   useEffect(() => {
@@ -165,7 +161,7 @@ const HomeNavbar = ({ onOpenMyBooks }) => {
                 <button
                   type="button"
                   onClick={logout}
-                  className="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-xl border border-rose-200/90 bg-rose-50/80 text-rose-600 shadow-2xs hover:bg-rose-100 hover:border-rose-400 active:scale-95 transition dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-400"
+                  className="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-xl border border-rose-200/90 bg-rose-50/80 text-rose-600 shadow-2xs hover:bg-rose-100 hover:border-rose-400 active:scale-95 transition dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-400 dark:hover:bg-rose-900/50 dark:hover:border-rose-700/60 dark:hover:text-rose-300"
                   title="Sign out of current account"
                 >
                   <LogOut className="h-4 w-4" />
@@ -204,7 +200,7 @@ const HomeNavbar = ({ onOpenMyBooks }) => {
                 setMobileMenuOpen(false);
                 onOpenMyBooks?.();
               }}
-              className="flex w-full items-center gap-2.5 rounded-xl border border-indigo-200/90 bg-indigo-100/60 px-3.5 py-2.5 text-xs font-bold text-indigo-800 transition hover:bg-indigo-200/70 dark:border-indigo-800 dark:bg-indigo-950/70 dark:text-cyan-300"
+              className="flex w-full items-center gap-2.5 rounded-xl border border-indigo-200/90 bg-indigo-100/60 px-3.5 py-2.5 text-xs font-bold text-indigo-800 transition hover:bg-indigo-200/70 dark:border-indigo-800 dark:bg-indigo-950/70 dark:text-cyan-300 dark:hover:bg-indigo-900/60 dark:hover:text-cyan-200"
             >
               <BookmarkCheck className="h-4 w-4 text-indigo-600 dark:text-cyan-400" />
               <span>My Borrowed Books & Returns</span>

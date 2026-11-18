@@ -7,7 +7,7 @@ import AlertModal from "../common/AlertModal";
 import ThemeToggle from "../common/ThemeToggle";
 
 const Header = ({ onMenuClick }) => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const { logout, currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -91,7 +91,7 @@ const Header = ({ onMenuClick }) => {
             type="button"
             onClick={() => setShowLogoutModal(true)}
             aria-label="Logout"
-            className="flex h-10 items-center gap-1.5 rounded-xl border border-rose-300/80 bg-rose-50 px-3 text-xs font-bold text-rose-700 shadow-2xs transition hover:bg-rose-100 hover:border-rose-400 hover:text-rose-800 active:scale-95 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-900/50"
+            className="flex h-10 items-center gap-1.5 rounded-xl border border-rose-300/80 bg-rose-50 px-3 text-xs font-bold text-rose-700 shadow-2xs transition hover:bg-rose-100 hover:border-rose-400 hover:text-rose-800 active:scale-95 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-900/50 dark:hover:border-rose-700/60 dark:hover:text-rose-200"
             title="Sign out of console"
           >
             <LogOut className="h-4 w-4" />

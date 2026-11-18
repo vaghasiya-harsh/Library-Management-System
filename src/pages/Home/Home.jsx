@@ -233,7 +233,7 @@ const Home = () => {
               className={`flex items-center gap-1.5 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 active:scale-95 ${
                 selectedCategory === "All"
                   ? "bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-500/25 ring-2 ring-indigo-500/30"
-                  : "bg-white border border-slate-200/90 text-slate-800 shadow-2xs hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600 dark:border-transparent dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-cyan-300"
+                  : "bg-white border border-slate-200/90 text-slate-800 shadow-2xs hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600 dark:border-slate-800 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
               }`}
             >
               <span>All Books</span>
@@ -254,7 +254,7 @@ const Home = () => {
                   className={`flex items-center gap-1.5 shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 active:scale-95 ${
                     isSelected
                       ? "bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-500/25 ring-2 ring-indigo-500/30"
-                      : "bg-white border border-slate-200/90 text-slate-800 shadow-2xs hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600 dark:border-transparent dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-cyan-300"
+                      : "bg-white border border-slate-200/90 text-slate-800 shadow-2xs hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600 dark:border-slate-800 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
                   }`}
                 >
                   <span>{cat}</span>
@@ -286,7 +286,7 @@ const Home = () => {
                     className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all active:scale-95 ${
                       isActive
                         ? "bg-slate-900 text-white shadow-sm dark:bg-gradient-to-r dark:from-indigo-600 dark:to-cyan-600 dark:text-white"
-                        : "bg-white border border-slate-200/90 text-slate-700 shadow-2xs hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600 dark:border-transparent dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-cyan-300"
+                        : "bg-white border border-slate-200/90 text-slate-700 shadow-2xs hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600 dark:border-slate-800 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
                     }`}
                   >
                     {status === "Available" ? "🟢 In Stock" : status === "Unavailable" ? "🔴 Checked Out" : "All Status"}
@@ -370,7 +370,7 @@ const Home = () => {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-indigo-50 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-cyan-300"
+                className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-indigo-50 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
               >
                 <ChevronLeft className="h-4 w-4" />
                 Previous
@@ -391,7 +391,7 @@ const Home = () => {
                       className={`h-9 w-9 rounded-xl text-xs font-bold transition-all active:scale-95 ${
                         currentPage === pageNum
                           ? "bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-500/25 ring-2 ring-indigo-500/30"
-                          : "border border-slate-200 bg-white text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-cyan-300"
+                          : "border border-slate-200 bg-white text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
                       }`}
                     >
                       {pageNum}
@@ -404,7 +404,7 @@ const Home = () => {
                 type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-indigo-50 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-cyan-300"
+                className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-indigo-50 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
               >
                 Next
                 <ChevronRight className="h-4 w-4" />

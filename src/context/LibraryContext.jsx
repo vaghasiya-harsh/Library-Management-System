@@ -106,7 +106,7 @@ export function LibraryProvider({ children }) {
 
     const newMember = {
       ...memberDetails,
-      id: generateMemberId(),
+      id: memberDetails.id || generateMemberId(),
       status: memberDetails.status || "Active",
     };
 

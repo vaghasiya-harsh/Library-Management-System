@@ -160,7 +160,7 @@ const BookQuickViewModal = ({ book, onClose, onBorrow }) => {
               <Link
                 to={`/books/${book.id}`}
                 onClick={onClose}
-                className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-slate-300/90 bg-white px-4 py-2.5 text-xs font-bold text-slate-800 shadow-2xs transition hover:bg-slate-50 hover:text-indigo-600 hover:border-indigo-300 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-cyan-300"
+                className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-slate-300/90 bg-white px-4 py-2.5 text-xs font-bold text-slate-800 shadow-2xs transition hover:bg-slate-50 hover:text-indigo-600 hover:border-indigo-300 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-cyan-300 dark:hover:border-cyan-500/50"
               >
                 View Full Details
                 <ArrowRight className="h-3.5 w-3.5" />

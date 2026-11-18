@@ -13,8 +13,10 @@ import {
   Clock,
   IdCard,
   ChevronDown,
+  Lock,
 } from "lucide-react";
 import { LibraryContext } from "../../context/LibraryContext";
+import { useAuth } from "../../context/AuthContext";
 import BookCoverImage from "../common/BookCoverImage";
 
 const LOAN_PERIODS = [
@@ -25,10 +27,26 @@ const LOAN_PERIODS = [
 
 const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
   const { members, transactions, issueBook, addMember } = useContext(LibraryContext);
+  const { currentUser, isAuthenticated } = useAuth();
+  const isReader = isAuthenticated && currentUser?.role === "Reader";
+
   const memberSelectId = useId();
 
-  const [activeTab, setActiveTab] = useState("existing"); // 'existing' | 'new'
+  // Find linked member record for logged in reader
+  const readerMember = useMemo(() => {
+    if (!currentUser) return null;
+    return (
+      members.find((m) => m.id === currentUser.memberId) ||
+      members.find((m) => m.email?.toLowerCase() === currentUser.email?.toLowerCase()) ||
+      null
+    );
+  }, [members, currentUser]);
+
+  const [activeTab, setActiveTab] = useState("existing"); // 'existing' | 'new' (admin only)
   const [selectedMemberId, setSelectedMemberId] = useState(() => {
+    if (isReader) {
+      return readerMember ? readerMember.id : currentUser?.memberId || "MEM001";
+    }
     try {
       const rememberedId = localStorage.getItem("library_last_reader_id");
       const initialMember =
@@ -39,10 +57,11 @@ const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
       return members[0]?.id || "";
     }
   });
+
   const [loanDays, setLoanDays] = useState(14);
   const [agreedToTerms, setAgreedToTerms] = useState(true);
 
-  // New Reader Quick Form
+  // New Reader Quick Form (Admin only)
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPhone, setNewPhone] = useState("");
@@ -58,20 +77,34 @@ const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
     onClose();
   };
 
-  // Selected member details and their active loans
-  const selectedMember = useMemo(
-    () => members.find((m) => m.id === selectedMemberId),
-    [members, selectedMemberId]
-  );
+  // Determine effective borrower ID
+  const effectiveBorrowerId = isReader
+    ? (readerMember?.id || currentUser?.memberId || "MEM001")
+    : selectedMemberId;
 
-  const memberActiveLoans = useMemo(() => {
-    if (!selectedMemberId) return [];
+  // Selected member details and their active loans
+  const selectedMember = useMemo(() => {
+    if (isReader) {
+      return (
+        readerMember || {
+          id: effectiveBorrowerId,
+          name: currentUser?.name || "Library Reader",
+          course: currentUser?.department || "General Studies",
+          status: "Active",
+        }
+      );
+    }
+    return members.find((m) => m.id === selectedMemberId);
+  }, [isReader, readerMember, currentUser, effectiveBorrowerId, members, selectedMemberId]);
+
+  const effectiveActiveLoans = useMemo(() => {
+    if (!effectiveBorrowerId) return [];
     return transactions.filter(
       (t) =>
-        t.memberId === selectedMemberId &&
+        t.memberId === effectiveBorrowerId &&
         ["Issued", "Overdue"].includes(t.status)
     );
-  }, [transactions, selectedMemberId]);
+  }, [transactions, effectiveBorrowerId]);
 
   if (!isOpen || !book) return null;
 
@@ -107,10 +140,10 @@ const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
       return;
     }
 
-    let targetMemberId = selectedMemberId;
+    let targetMemberId = effectiveBorrowerId;
 
-    // Handle new reader registration on the fly
-    if (activeTab === "new") {
+    // Handle new reader registration on the fly (Admin mode only)
+    if (!isReader && activeTab === "new") {
       if (!newName.trim() || !newEmail.trim()) {
         setError("Please enter your name and email to create your reader card.");
         return;
@@ -132,6 +165,19 @@ const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
 
       targetMemberId = addResult.member.id;
       setSelectedMemberId(targetMemberId);
+    }
+
+    // If Reader and not in members catalog, register them automatically
+    if (isReader && !members.some((m) => m.id === targetMemberId)) {
+      addMember({
+        id: targetMemberId,
+        name: currentUser.name,
+        email: currentUser.email,
+        phone: "+91 98765 43210",
+        course: currentUser.department || "General Studies",
+        joiningDate: issueDateStr,
+        status: "Active",
+      });
     }
 
     if (!targetMemberId) {
@@ -163,8 +209,8 @@ const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
     const borrower =
       members.find((m) => m.id === targetMemberId) || {
         id: targetMemberId,
-        name: newName || "Library Reader",
-        course: newCourse,
+        name: isReader ? currentUser?.name : newName || "Library Reader",
+        course: isReader ? currentUser?.department : newCourse,
       };
 
     setIssueReceipt({
@@ -182,6 +228,8 @@ const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
       formattedDueDate,
     });
   };
+
+  const isOverQuota = effectiveActiveLoans.length >= 3;
 
   return (
     <div
@@ -206,7 +254,7 @@ const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
 
         {/* Scrollable Modal Content */}
         <div className="overflow-y-auto p-5 sm:p-7 space-y-6">
-          {/* If Issue Receipt is Ready (Checkout Complete View) */}
+          {/* If Issue Receipt is Ready */}
           {issueReceipt ? (
             <div className="space-y-6 animate-in zoom-in-95 duration-300">
               {/* Success Badge */}
@@ -317,10 +365,10 @@ const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="w-full sm:flex-1 flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-xs hover:bg-slate-50 active:scale-95 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                  className="w-full sm:flex-1 flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-xs hover:border-indigo-400 hover:bg-indigo-50/70 hover:text-indigo-700 active:scale-95 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-cyan-300"
                 >
                   <Printer className="h-4 w-4" />
-                  Print Issue Slip
+                  <span>Print Issue Slip</span>
                 </button>
 
                 <button
@@ -349,7 +397,9 @@ const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
                     Borrow Library Book
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Self-service checkout for students, faculty & registered members
+                    {isReader
+                      ? "Personal student reader checkout with verified identity"
+                      : "Staff circulation desk checkout"}
                   </p>
                 </div>
               </div>
@@ -391,164 +441,213 @@ const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
                 </div>
               )}
 
-              {/* Step 1: Member Identity Selector / Tabs */}
+              {/* Step 1: Borrower Identification with Strict Privacy Protection */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <label htmlFor={memberSelectId} className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                     Step 1: Borrower Identification
                   </label>
-                  <div className="flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab("existing")}
-                      className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-bold transition ${
-                        activeTab === "existing"
-                          ? "bg-white text-indigo-600 shadow-2xs dark:bg-slate-700 dark:text-cyan-300"
-                          : "text-slate-500 hover:text-slate-800 dark:text-slate-400"
-                      }`}
-                    >
-                      <UserCheck className="h-3.5 w-3.5" />
-                      <span>Select Member</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab("new")}
-                      className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-bold transition ${
-                        activeTab === "new"
-                          ? "bg-white text-indigo-600 shadow-2xs dark:bg-slate-700 dark:text-cyan-300"
-                          : "text-slate-500 hover:text-slate-800 dark:text-slate-400"
-                      }`}
-                    >
-                      <UserPlus className="h-3.5 w-3.5" />
-                      <span>+ New Card</span>
-                    </button>
-                  </div>
+                  {isReader ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950/60 dark:border-emerald-800 dark:text-emerald-300">
+                      <Lock className="h-3 w-3" />
+                      <span>Verified Patron</span>
+                    </span>
+                  ) : (
+                    <div className="flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("existing")}
+                        className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-bold transition-all duration-200 ${
+                          activeTab === "existing"
+                            ? "bg-white text-indigo-600 shadow-2xs dark:bg-slate-700 dark:text-cyan-300"
+                            : "text-slate-500 hover:bg-slate-200/60 hover:text-slate-800 dark:text-slate-400"
+                        }`}
+                      >
+                        <UserCheck className="h-3.5 w-3.5" />
+                        <span>Select Member</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("new")}
+                        className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-bold transition-all duration-200 ${
+                          activeTab === "new"
+                            ? "bg-white text-indigo-600 shadow-2xs dark:bg-slate-700 dark:text-cyan-300"
+                            : "text-slate-500 hover:bg-slate-200/60 hover:text-slate-800 dark:text-slate-400"
+                        }`}
+                      >
+                        <UserPlus className="h-3.5 w-3.5" />
+                        <span>+ New Card</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                {activeTab === "existing" ? (
-                  <div className="space-y-2">
-                    <div className="relative">
-                      <select
-                        id={memberSelectId}
-                        value={selectedMemberId}
-                        onChange={(e) => setSelectedMemberId(e.target.value)}
-                        className="w-full appearance-none rounded-xl border border-slate-300 bg-white py-3 pl-4 pr-10 text-xs font-bold text-slate-900 outline-none transition-all duration-200 shadow-2xs hover:border-indigo-400 focus:border-indigo-500 focus:bg-white focus:text-slate-900 focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:border-slate-600 dark:focus:bg-slate-800 dark:focus:text-white dark:focus:border-cyan-400 dark:focus:ring-2 dark:focus:ring-cyan-400/25 cursor-pointer"
-                      >
-                        {members.map((m) => (
-                          <option
-                            key={m.id}
-                            value={m.id}
-                            className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 py-2 font-semibold"
-                          >
-                            {m.name} ({m.id}) — {m.course}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 dark:text-slate-400">
-                        <ChevronDown className="h-4 w-4" />
+                {/* If Logged in as Reader: Lock strictly to Reader's Account to prevent impersonation */}
+                {isReader ? (
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-indigo-200/90 bg-indigo-50/70 p-4 text-xs dark:border-indigo-900/60 dark:bg-indigo-950/40 shadow-2xs">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 text-sm font-black text-white shadow-xs">
+                        {currentUser?.name?.charAt(0) || "U"}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="font-extrabold text-slate-900 dark:text-white truncate text-sm">
+                            {currentUser?.name}
+                          </p>
+                          <span className="rounded-md bg-indigo-100 px-2 py-0.5 text-[10px] font-bold text-indigo-700 dark:bg-indigo-900 dark:text-cyan-300">
+                            Reader Card
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                          {currentUser?.department || "Student Member"} • <span className="font-mono text-indigo-600 dark:text-cyan-400 font-bold">{effectiveBorrowerId}</span>
+                        </p>
                       </div>
                     </div>
 
-                    {/* Member Quota & Status Pill */}
-                    {selectedMember && (
-                      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200/90 bg-slate-50/90 p-3.5 text-xs dark:border-slate-800 dark:bg-slate-800/80 shadow-2xs transition-colors">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 text-sm font-black text-white shadow-xs">
-                            {selectedMember.name.charAt(0)}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="font-extrabold text-slate-900 dark:text-white truncate text-xs sm:text-sm">
-                              {selectedMember.name}
-                            </p>
-                            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                              {selectedMember.course} • <span className="font-mono text-indigo-600 dark:text-cyan-400 font-bold">{selectedMember.id}</span>
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2.5 shrink-0">
-                          <span className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
-                            Active Loans:{" "}
-                            <strong
-                              className={
-                                memberActiveLoans.length >= 3
-                                  ? "text-rose-600 dark:text-rose-400 font-black"
-                                  : "text-indigo-600 dark:text-cyan-400 font-black"
-                              }
-                            >
-                              {memberActiveLoans.length} / 3
-                            </strong>
-                          </span>
-                          <span
-                            className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold border ${
-                              selectedMember.status === "Active"
-                                ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800/60"
-                                : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/70 dark:text-rose-300 dark:border-rose-800/60"
-                            }`}
-                          >
-                            {selectedMember.status}
-                          </span>
-                        </div>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      <span className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
+                        Active Loans:{" "}
+                        <strong
+                          className={
+                            isOverQuota
+                              ? "text-rose-600 dark:text-rose-400 font-black"
+                              : "text-indigo-600 dark:text-cyan-400 font-black"
+                          }
+                        >
+                          {effectiveActiveLoans.length} / 3
+                        </strong>
+                      </span>
+                      <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold border bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800/60">
+                        Active Patron
+                      </span>
+                    </div>
                   </div>
                 ) : (
-                  /* New Reader Quick Registration Form */
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-2xl border border-slate-200/90 bg-white p-4 dark:border-slate-800 dark:bg-slate-800/40">
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                        placeholder="e.g. John Doe"
-                        className="mt-1 w-full rounded-xl border border-slate-300/80 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:focus:bg-slate-800 dark:text-white dark:focus:border-cyan-400 dark:focus:ring-2 dark:focus:ring-cyan-400/20"
-                      />
-                    </div>
+                  /* Admin Staff Circulation Selector */
+                  activeTab === "existing" ? (
+                    <div className="space-y-2">
+                      <div className="relative">
+                        <select
+                          id={memberSelectId}
+                          value={selectedMemberId}
+                          onChange={(e) => setSelectedMemberId(e.target.value)}
+                          className="w-full appearance-none rounded-xl border border-slate-300 bg-white py-3 pl-4 pr-10 text-xs font-bold text-slate-900 outline-none transition-all duration-200 shadow-2xs hover:border-indigo-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white cursor-pointer"
+                        >
+                          {members.map((m) => (
+                            <option
+                              key={m.id}
+                              value={m.id}
+                              className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 py-2 font-semibold"
+                            >
+                              {m.name} ({m.id}) — {m.course}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400">
+                          <ChevronDown className="h-4 w-4" />
+                        </div>
+                      </div>
 
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={newEmail}
-                        onChange={(e) => setNewEmail(e.target.value)}
-                        placeholder="john.doe@university.edu"
-                        className="mt-1 w-full rounded-xl border border-slate-300/80 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:focus:bg-slate-800 dark:text-white dark:focus:border-cyan-400 dark:focus:ring-2 dark:focus:ring-cyan-400/20"
-                      />
-                    </div>
+                      {selectedMember && (
+                        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200/90 bg-slate-50/90 p-3.5 text-xs dark:border-slate-800 dark:bg-slate-800/80 shadow-2xs">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 text-sm font-black text-white shadow-xs">
+                              {selectedMember.name.charAt(0)}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-extrabold text-slate-900 dark:text-white truncate text-xs sm:text-sm">
+                                {selectedMember.name}
+                              </p>
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                                {selectedMember.course} • <span className="font-mono text-indigo-600 dark:text-cyan-400 font-bold">{selectedMember.id}</span>
+                              </p>
+                            </div>
+                          </div>
 
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
-                        Phone / Contact
-                      </label>
-                      <input
-                        type="tel"
-                        value={newPhone}
-                        onChange={(e) => setNewPhone(e.target.value)}
-                        placeholder="+91 98765 43210"
-                        className="mt-1 w-full rounded-xl border border-slate-300/80 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:focus:bg-slate-800 dark:text-white dark:focus:border-cyan-400 dark:focus:ring-2 dark:focus:ring-cyan-400/20"
-                      />
+                          <div className="flex items-center gap-2.5 shrink-0">
+                            <span className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
+                              Active Loans:{" "}
+                              <strong
+                                className={
+                                  effectiveActiveLoans.length >= 3
+                                    ? "text-rose-600 dark:text-rose-400 font-black"
+                                    : "text-indigo-600 dark:text-cyan-400 font-black"
+                                }
+                              >
+                                {effectiveActiveLoans.length} / 3
+                              </strong>
+                            </span>
+                            <span
+                              className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold border ${
+                                selectedMember.status === "Active"
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/70 dark:text-emerald-300"
+                                  : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/70 dark:text-rose-300"
+                              }`}
+                            >
+                              {selectedMember.status}
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </div>
+                  ) : (
+                    /* Admin Quick Registration Form */
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-2xl border border-slate-200/90 bg-white p-4 dark:border-slate-800 dark:bg-slate-800/40">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                          Full Name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={newName}
+                          onChange={(e) => setNewName(e.target.value)}
+                          placeholder="e.g. John Doe"
+                          className="mt-1 w-full rounded-xl border border-slate-300/80 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        />
+                      </div>
 
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
-                        Department / Course
-                      </label>
-                      <input
-                        type="text"
-                        value={newCourse}
-                        onChange={(e) => setNewCourse(e.target.value)}
-                        placeholder="e.g. Literature & Arts"
-                        className="mt-1 w-full rounded-xl border border-slate-300/80 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:focus:bg-slate-800 dark:text-white dark:focus:border-cyan-400 dark:focus:ring-2 dark:focus:ring-cyan-400/20"
-                      />
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={newEmail}
+                          onChange={(e) => setNewEmail(e.target.value)}
+                          placeholder="john.doe@university.edu"
+                          className="mt-1 w-full rounded-xl border border-slate-300/80 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                          Phone / Contact
+                        </label>
+                        <input
+                          type="tel"
+                          value={newPhone}
+                          onChange={(e) => setNewPhone(e.target.value)}
+                          placeholder="+91 98765 43210"
+                          className="mt-1 w-full rounded-xl border border-slate-300/80 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                          Department / Course
+                        </label>
+                        <input
+                          type="text"
+                          value={newCourse}
+                          onChange={(e) => setNewCourse(e.target.value)}
+                          placeholder="e.g. Literature & Arts"
+                          className="mt-1 w-full rounded-xl border border-slate-300/80 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )
                 )}
               </div>
 
@@ -563,14 +662,22 @@ const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
                       key={period.days}
                       type="button"
                       onClick={() => setLoanDays(period.days)}
-                      className={`flex flex-col items-center justify-center rounded-2xl border p-3 text-center transition-all ${
+                      className={`group flex flex-col items-center justify-center rounded-2xl border p-3 text-center transition-all duration-200 cursor-pointer ${
                         loanDays === period.days
-                          ? "border-indigo-600 bg-indigo-50/80 text-indigo-700 shadow-sm dark:border-cyan-400 dark:bg-indigo-950/60 dark:text-cyan-300 scale-102"
-                          : "border-slate-200/90 bg-white text-slate-700 hover:border-indigo-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-300"
+                          ? "border-indigo-600 bg-indigo-50/90 text-indigo-700 shadow-sm shadow-indigo-500/15 ring-2 ring-indigo-500/30 scale-102 dark:border-cyan-400 dark:bg-indigo-950/80 dark:text-cyan-300"
+                          : "border-slate-200/90 bg-white text-slate-700 hover:border-indigo-400 hover:bg-indigo-50/70 hover:text-indigo-700 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-300"
                       }`}
                     >
-                      <span className="text-sm font-extrabold">{period.label}</span>
-                      <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                      <span className="text-sm font-extrabold transition-colors">
+                        {period.label}
+                      </span>
+                      <span
+                        className={`text-[10px] mt-0.5 transition-colors ${
+                          loanDays === period.days
+                            ? "text-indigo-600 dark:text-cyan-400/90 font-semibold"
+                            : "text-slate-500 group-hover:text-indigo-600 dark:text-slate-400"
+                        }`}
+                      >
                         {period.desc}
                       </span>
                     </button>
@@ -608,22 +715,24 @@ const UserBorrowModal = ({ book, isOpen, onClose, onOpenMyBooks }) => {
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 active:scale-95 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                  className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 hover:border-slate-400 hover:bg-slate-100 active:scale-95 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  disabled={!isAvailable || (activeTab === "existing" && memberActiveLoans.length >= 3)}
-                  className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold text-white shadow-md transition active:scale-95 ${
-                    !isAvailable || (activeTab === "existing" && memberActiveLoans.length >= 3)
+                  disabled={!isAvailable || isOverQuota}
+                  className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold text-white shadow-md transition-all duration-200 active:scale-95 ${
+                    !isAvailable || isOverQuota
                       ? "bg-slate-400 cursor-not-allowed dark:bg-slate-700"
-                      : "bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 shadow-indigo-500/25"
+                      : "bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 shadow-indigo-500/25 hover:shadow-lg hover:scale-102"
                   }`}
                 >
                   <Sparkles className="h-4 w-4" />
-                  <span>Confirm & Issue Book</span>
+                  <span>
+                    {isOverQuota ? "Borrowing Limit (3 Books) Reached" : "Confirm & Issue Book"}
+                  </span>
                 </button>
               </div>
             </form>

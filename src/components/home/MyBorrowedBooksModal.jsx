@@ -10,15 +10,33 @@ import {
   User,
   ArrowRight,
   BookmarkCheck,
+  Lock,
 } from "lucide-react";
 import { LibraryContext } from "../../context/LibraryContext";
+import { useAuth } from "../../context/AuthContext";
 import BookCoverImage from "../common/BookCoverImage";
 
 const MyBorrowedBooksModal = ({ isOpen, onClose, initialMemberId, onBorrowMore }) => {
   const { members, transactions, books, returnBook } = useContext(LibraryContext);
+  const { currentUser, isAuthenticated } = useAuth();
+  const isReader = isAuthenticated && currentUser?.role === "Reader";
+
   const readerSelectId = useId();
 
+  // Find linked member record for logged in reader
+  const readerMember = useMemo(() => {
+    if (!currentUser) return null;
+    return (
+      members.find((m) => m.id === currentUser.memberId) ||
+      members.find((m) => m.email?.toLowerCase() === currentUser.email?.toLowerCase()) ||
+      null
+    );
+  }, [members, currentUser]);
+
   const [selectedMemberId, setSelectedMemberId] = useState(() => {
+    if (isReader) {
+      return readerMember ? readerMember.id : currentUser?.memberId || "MEM001";
+    }
     if (initialMemberId) return initialMemberId;
     try {
       const rememberedId = localStorage.getItem("library_last_reader_id");
@@ -28,8 +46,9 @@ const MyBorrowedBooksModal = ({ isOpen, onClose, initialMemberId, onBorrowMore }
       return members[0]?.id || "";
     }
   });
+
   const [prevInitialId, setPrevInitialId] = useState(initialMemberId);
-  if (initialMemberId && initialMemberId !== prevInitialId) {
+  if (initialMemberId && initialMemberId !== prevInitialId && !isReader) {
     setPrevInitialId(initialMemberId);
     setSelectedMemberId(initialMemberId);
   }
@@ -42,17 +61,30 @@ const MyBorrowedBooksModal = ({ isOpen, onClose, initialMemberId, onBorrowMore }
     onClose();
   };
 
+  // Effective Member ID for queries
+  const effectiveMemberId = isReader
+    ? (readerMember?.id || currentUser?.memberId || "MEM001")
+    : selectedMemberId;
+
   // Selected Member Object
-  const currentMember = useMemo(
-    () => members.find((m) => m.id === selectedMemberId) || members[0],
-    [members, selectedMemberId]
-  );
+  const currentMember = useMemo(() => {
+    if (isReader) {
+      return (
+        readerMember || {
+          id: effectiveMemberId,
+          name: currentUser?.name || "Library Reader",
+          course: currentUser?.department || "General Studies",
+        }
+      );
+    }
+    return members.find((m) => m.id === selectedMemberId) || members[0];
+  }, [isReader, readerMember, effectiveMemberId, currentUser, members, selectedMemberId]);
 
   // All transactions for this member
   const memberTransactions = useMemo(() => {
-    if (!currentMember) return [];
-    return transactions.filter((t) => t.memberId === currentMember.id);
-  }, [transactions, currentMember]);
+    if (!effectiveMemberId) return [];
+    return transactions.filter((t) => t.memberId === effectiveMemberId);
+  }, [transactions, effectiveMemberId]);
 
   // Active Loans vs Returned
   const activeLoans = useMemo(
@@ -141,7 +173,9 @@ const MyBorrowedBooksModal = ({ isOpen, onClose, initialMemberId, onBorrowMore }
                 My Borrowed Books
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Track your active book loans, return due dates, and circulation history
+                {isReader
+                  ? "Personal circulation ledger and active reading loans"
+                  : "Circulation management desk and member reading history"}
               </p>
             </div>
           </div>
@@ -156,34 +190,56 @@ const MyBorrowedBooksModal = ({ isOpen, onClose, initialMemberId, onBorrowMore }
           </button>
         </div>
 
-        {/* Member Selector Bar & Reader Card */}
+        {/* Member Selector Bar & Reader Card (Privacy Protected) */}
         <div className="border-b border-slate-200/80 bg-slate-50/70 p-4 sm:px-7 dark:border-slate-800 dark:bg-slate-800/40">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-indigo-600 dark:text-cyan-400 shrink-0" />
-              <label htmlFor={readerSelectId} className="text-xs font-bold text-slate-700 dark:text-slate-300 shrink-0">
-                Reader Account:
-              </label>
-              <select
-                id={readerSelectId}
-                value={selectedMemberId}
-                onChange={(e) => {
-                  setSelectedMemberId(e.target.value);
-                  try {
-                    localStorage.setItem("library_last_reader_id", e.target.value);
-                  } catch {
-                    // ignore
-                  }
-                }}
-                className="rounded-xl border border-slate-300/80 bg-white px-3 py-1.5 text-xs font-bold text-slate-900 outline-none transition focus:border-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white cursor-pointer"
-              >
-                {members.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.name} ({m.id})
-                  </option>
-                ))}
-              </select>
-            </div>
+            {isReader ? (
+              /* Privacy Enforced: Reader sees strictly their own profile */
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700 dark:bg-indigo-950/80 dark:text-cyan-300">
+                  <User className="h-4 w-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-slate-900 dark:text-white">
+                    {currentUser?.name || "Library Reader"}
+                  </span>
+                  <span className="ml-2 font-mono text-[11px] font-semibold text-indigo-600 dark:text-cyan-400">
+                    ({effectiveMemberId})
+                  </span>
+                </div>
+                <span className="ml-1 inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950/60 dark:border-emerald-800 dark:text-emerald-300">
+                  <Lock className="h-2.5 w-2.5" />
+                  <span>Personal Reader Card</span>
+                </span>
+              </div>
+            ) : (
+              /* Admin Circulation Desk: Selector for all members */
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-indigo-600 dark:text-cyan-400 shrink-0" />
+                <label htmlFor={readerSelectId} className="text-xs font-bold text-slate-700 dark:text-slate-300 shrink-0">
+                  Staff View Reader:
+                </label>
+                <select
+                  id={readerSelectId}
+                  value={selectedMemberId}
+                  onChange={(e) => {
+                    setSelectedMemberId(e.target.value);
+                    try {
+                      localStorage.setItem("library_last_reader_id", e.target.value);
+                    } catch {
+                      // ignore
+                    }
+                  }}
+                  className="rounded-xl border border-slate-300/80 bg-white px-3 py-1.5 text-xs font-bold text-slate-900 outline-none transition focus:border-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white cursor-pointer"
+                >
+                  {members.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name} ({m.id})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Quick Stats Pills */}
             {currentMember && (
@@ -250,8 +306,8 @@ const MyBorrowedBooksModal = ({ isOpen, onClose, initialMemberId, onBorrowMore }
               </h3>
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
                 {filterTab === "active"
-                  ? "Explore our 100+ catalog titles and click 'Borrow' to check out physical books under your library card."
-                  : "Books you return will appear here with full transaction records."}
+                  ? "Explore our collection and click 'Borrow' on any available book to read."
+                  : "Books you return will appear here with complete circulation records."}
               </p>
               {filterTab === "active" && (
                 <button
@@ -361,7 +417,7 @@ const MyBorrowedBooksModal = ({ isOpen, onClose, initialMemberId, onBorrowMore }
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-bold text-slate-700 hover:bg-slate-100 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+            className="rounded-xl border border-slate-300 bg-white px-4 py-2 font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white"
           >
             Close
           </button>

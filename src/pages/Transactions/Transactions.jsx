@@ -156,7 +156,7 @@ const Transactions = () => {
         <button
           type="button"
           onClick={() => exportTransactionsCSV(transactions, books, members)}
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-cyan-300"
+          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
         >
           <Download className="h-4 w-4" />
           <span>Export CSV Log</span>
@@ -353,7 +353,7 @@ const Transactions = () => {
                   className={`rounded-xl px-3 py-1.5 text-xs font-bold transition active:scale-95 ${
                     statusFilter === st
                       ? "bg-indigo-600 text-white shadow-xs dark:bg-gradient-to-r dark:from-indigo-600 dark:to-cyan-600 dark:text-white"
-                      : "bg-white text-slate-800 border border-slate-300/80 shadow-2xs hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-300 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-cyan-300"
+                      : "bg-white text-slate-800 border border-slate-300/80 shadow-2xs hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-300 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
                   }`}
                 >
                   {st}

@@ -132,7 +132,7 @@ const BookCard = ({ book, onQuickView, onBorrow }) => {
           <button
             type="button"
             onClick={() => onQuickView(book)}
-            className="flex items-center justify-center gap-1 rounded-xl border border-slate-300/90 bg-white px-2.5 py-2 text-xs font-bold text-slate-800 shadow-2xs transition-all duration-200 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600 active:scale-95 dark:border-slate-800 dark:bg-slate-800/80 dark:text-slate-200 dark:hover:border-cyan-500/40 dark:hover:text-cyan-300"
+            className="flex items-center justify-center gap-1 rounded-xl border border-slate-300/90 bg-white px-2.5 py-2 text-xs font-bold text-slate-800 shadow-2xs transition-all duration-200 hover:border-indigo-400 hover:bg-indigo-50/80 hover:text-indigo-600 active:scale-95 dark:border-slate-800 dark:bg-slate-800/80 dark:text-slate-200 dark:hover:border-cyan-500/50 dark:hover:bg-slate-700 dark:hover:text-cyan-300"
             title="Preview book info"
           >
             <Eye className="h-3.5 w-3.5" />
@@ -145,7 +145,7 @@ const BookCard = ({ book, onQuickView, onBorrow }) => {
             onClick={() => (onBorrow ? onBorrow(book) : onQuickView(book))}
             className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all duration-200 active:scale-95 shadow-sm ${
               isAvailable
-                ? "bg-gradient-to-r from-indigo-600 to-cyan-600 text-white hover:from-indigo-500 hover:to-cyan-500 shadow-indigo-500/20 hover:shadow-md"
+                ? "bg-gradient-to-r from-indigo-600 to-cyan-600 text-white hover:from-indigo-500 hover:to-cyan-500 shadow-indigo-500/20 hover:shadow-md hover:scale-102"
                 : "bg-slate-200 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-500"
             }`}
             title={isAvailable ? "Borrow this title" : "Out of physical copies"}
@@ -156,7 +156,7 @@ const BookCard = ({ book, onQuickView, onBorrow }) => {
 
           <Link
             to={`/books/${book.id}`}
-            className="flex items-center justify-center rounded-xl border border-slate-200/90 bg-slate-50 p-2 text-slate-700 shadow-2xs transition-all duration-200 hover:bg-white hover:text-indigo-600 hover:border-indigo-300 active:scale-95 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300 dark:hover:text-cyan-300"
+            className="flex items-center justify-center rounded-xl border border-slate-200/90 bg-slate-50 p-2 text-slate-700 shadow-2xs transition-all duration-200 hover:bg-white hover:text-indigo-600 hover:border-indigo-300 active:scale-95 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-cyan-300 dark:hover:border-cyan-500/40"
             title="View full book synopsis"
           >
             <ArrowUpRight className="h-4 w-4" />
